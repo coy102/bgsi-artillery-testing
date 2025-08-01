@@ -1,0 +1,28 @@
+config:
+  target: "{{ $processEnvironment.SBEACON_API_URL }}"
+  phases:
+    - duration: 60
+      arrivalCount: 10 # 10 virtual users
+      name: "Load test - 200 total requests over 100 seconds"
+  plugins:
+    fake-data:
+      randPassword:
+        size: 5
+
+  # HTTP engine configuration
+  http:
+    timeout: 30
+    pool: 25
+
+scenarios:
+  - name: "SBEACON indexing Project API Test"
+    weight: 100
+    flow:
+      - post:
+          url: "/dportal/admin/sbeacon/index"
+          headers:
+            Content-Type: "application/json"
+            Authorization: "Bearer {{ $processEnvironment.JWT_TOKEN }}"
+            User-Agent: "Artillery SBEACON Load Test"
+          expect:
+            - statusCode: [200]

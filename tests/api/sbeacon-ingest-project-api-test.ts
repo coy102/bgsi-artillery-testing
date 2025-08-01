@@ -1,4 +1,4 @@
-import { PREFIX_S3_PATH, PROJECT_NAME_INPUT } from "./constants";
+import { PREFIX_S3_PATH, PROJECT_NAME_INPUT, PROJECT_NAMES } from "./constants";
 
 // processor.ts
 interface Context {
@@ -9,30 +9,49 @@ interface Events {
   emit: (event: string, data?: any) => void;
 }
 
+interface RequestParams {
+  url: string;
+  method: string;
+  headers: Record<string, any>;
+  json: any;
+}
+
 type DoneCallback = () => void;
 
-export function setAllVariables(
+export function setVariablesForNextProject(
+  requestParams: RequestParams,
   context: Context,
-  events: Events,
-  done: DoneCallback
+  ee: Events,
+  next: DoneCallback
 ): void {
+  // Get current loop iteration (0-based, Artillery provides this)
+  const currentLoop = context.vars.$loopCount || 1;
+  const arrayIndex = currentLoop - 1; // Convert to 0-based index
+
   // Generate random suffix (5 characters)
   const randomSuffix = Math.random().toString(36).substring(2, 7);
-  const PROJECT_NAME = PROJECT_NAME_INPUT;
+  const projectName =
+    PROJECT_NAMES[arrayIndex] || `Project-fallback-${currentLoop}`;
 
   // Set dynamic variables
-  context.vars.datasetId = `${PROJECT_NAME}-${randomSuffix}`;
-  context.vars.projectName = PROJECT_NAME;
+  const datasetId = `${projectName}-${randomSuffix}`;
+  context.vars.projectName = projectName;
 
   // Set S3 payload URL
-  context.vars.s3PayloadUrl = `${PREFIX_S3_PATH}${PROJECT_NAME}/project-files/metadata.json`;
+  context.vars.s3PayloadUrl = `${PREFIX_S3_PATH}${projectName}/project-files/metadata.json`;
 
   // Create VCF locations array - Artillery can handle this better than array in variables
   context.vars.vcfLocationsList = [
-    `${PREFIX_S3_PATH}${PROJECT_NAME}/project-files/pgx.vcf.gz`,
-    `${PREFIX_S3_PATH}${PROJECT_NAME}/project-files/rare_disease.vcf.gz`,
-    `${PREFIX_S3_PATH}${PROJECT_NAME}/project-files/chr1.vcf.gz`,
+    `${PREFIX_S3_PATH}${projectName}/project-files/pgx.vcf.gz`,
+    `${PREFIX_S3_PATH}${projectName}/project-files/rare_disease.vcf.gz`,
+    `${PREFIX_S3_PATH}${projectName}/project-files/chr1.vcf.gz`,
   ];
 
-  done();
+  requestParams.url = `/dportal/admin/projects/${projectName}/ingest/${datasetId}`;
+
+  // Debug logs
+  console.log(
+    `🎯 Loop ${currentLoop}/10 [Index: ${arrayIndex}] -> Project: ${projectName}`
+  );
+  next();
 }
