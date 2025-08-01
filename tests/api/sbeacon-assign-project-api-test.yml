@@ -1,0 +1,74 @@
+config:
+  target: "{{ $processEnvironment.SBEACON_API_URL }}"
+  phases:
+    - duration: 100
+      arrivalCount: 200
+      name: "Load test - 200 total requests over 100 seconds"
+      # # Warm up - Start slow to let system initialize
+      # - duration: 120
+      #   arrivalRate: 1
+      #   name: "Warm up - 1 RPS"
+
+      # # Ramp up - Gradually increase load
+      # - duration: 300
+      #   arrivalRate: 1
+      #   rampTo: 10
+      #   name: "Ramp up - 1 to 10 RPS"
+
+      # # Sustained load - Normal production traffic
+      # - duration: 600
+      #   arrivalRate: 10
+      #   name: "Sustained load - 10 RPS"
+
+      # # Peak load - Handle traffic spikes
+      # - duration: 300
+      #   arrivalRate: 10
+      #   rampTo: 25
+      #   name: "Peak ramp - 10 to 25 RPS"
+
+      # # Spike test - Maximum capacity test
+      # - duration: 120
+      #   arrivalRate: 25
+      #   name: "Spike load - 25 RPS"
+
+      # # Cool down - Verify system recovery
+      # - duration: 180
+      #   arrivalRate: 25
+      #   rampTo: 5
+      #   name: "Cool down - 25 to 5 RPS"
+  plugins:
+    fake-data:
+      randPassword:
+        size: 5
+  variables:
+    PROJECT_NAME_INPUT: "Project-load-testing-bfa975"
+    S3_PAYLOAD: "s3://gaspi-dataportal-20250725085318492000000003/projects/Project-load-testing-bfa975/project-files/metadata.json"
+    VCF_LOCATION_1: "s3://gaspi-dataportal-20250725085318492000000003/projects/Project-load-testing-bfa975/project-files/pgx.vcf.gz"
+    VCF_LOCATION_2: "s3://gaspi-dataportal-20250725085318492000000003/projects/Project-load-testing-bfa975/project-files/rare_disease.vcf.gz"
+    VCF_LOCATION_3: "s3://gaspi-dataportal-20250725085318492000000003/projects/Project-load-testing-bfa975/project-files/chr1.vcf.gz"
+
+  # HTTP engine configuration
+  http:
+    timeout: 30
+    pool: 25
+
+scenarios:
+  - name: "SBEACON Ingest Project API Test"
+    weight: 100
+    flow:
+      # - function: "setDynamicVariables" # Custom function
+      - log: "Generated Dataset ID: {{ PROJECT_NAME_INPUT }}-{{ $randPassword() }}"
+      - post:
+          url: "/dportal/admin/projects/{{ PROJECT_NAME_INPUT }}/ingest/{{ PROJECT_NAME_INPUT }}-{{ $randPassword() }}"
+          headers:
+            Content-Type: "application/json"
+            Authorization: "Bearer {{ $processEnvironment.JWT_TOKEN }}"
+            User-Agent: "Artillery SBEACON Load Test"
+          json:
+            s3Payload: "{{ S3_PAYLOAD }}"
+            vcfLocations:
+              - "{{ VCF_LOCATION_1 }}"
+              - "{{ VCF_LOCATION_2 }}"
+              - "{{ VCF_LOCATION_3 }}"
+          expect:
+            - statusCode: [200]

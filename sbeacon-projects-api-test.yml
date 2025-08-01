@@ -1,0 +1,33 @@
+config:
+  target: "{{ $processEnvironment.SBEACON_API_URL }}"
+  phases:
+    # Warm up
+    - duration: 30
+      arrivalCount: 2
+      name: "Warm up - 2 RPS"
+    # # Sustained load
+    # - duration: 60
+    #   arrivalRate: 5
+    #   name: "Sustained load - 5 RPS"
+    # # Peak load
+    # - duration: 30
+    #   arrivalRate: 10
+    #   name: "Peak load - 10 RPS"
+
+  # HTTP engine configuration
+  http:
+    timeout: 30
+    pool: 25
+
+scenarios:
+  - name: "SBEACON Projects API Test"
+    weight: 100
+    flow:
+      - get:
+          url: "/dportal/projects"
+          headers:
+            Content-Type: "application/json"
+            Authorization: "Bearer {{ $processEnvironment.JWT_TOKEN }}"
+            User-Agent: "Artillery SBEACON Load Test"
+          expect:
+            - statusCode: [200]

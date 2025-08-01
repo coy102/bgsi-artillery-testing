@@ -1,0 +1,79 @@
+config:
+  target: "https://d1qi3skkkgjn1r.cloudfront.net"
+  phases:
+    - duration: 60 # Test berjalan 60 detik
+      arrivalCount: 10
+      name: "Data Portal Load Test"
+  engines:
+    playwright:
+      launchOptions:
+        headless: true
+        slowMo: 100 # Add slight delay for stability
+      contextOptions:
+        viewport:
+          width: 1280
+          height: 720
+        userAgent: "Artillery LoadTest Bot"
+  processor: "./login-browser-test.ts"
+  environments:
+    default:
+      variables:
+        LOGIN_EMAIL: "{{ $processEnvironment.LOGIN_EMAIL }}"
+        LOGIN_PASSWORD: "{{ $processEnvironment.LOGIN_PASSWORD }}"
+
+scenarios:
+  # - name: "Login and Portal Verification"
+  #   engine: "playwright"
+  #   testFunction: "loginAndPortal"
+  #   weight: 30
+
+  # - name: "Data Portal Tab Navigation"
+  #   engine: "playwright"
+  #   testFunction: "dataPortalNavigation"
+  #   weight: 20
+
+  # - name: "Project Onboard and Upload"
+  #   engine: "playwright"
+  #   testFunction: "projectOnBoardAndUpload"
+  #   weight: 25
+
+  - name: "Full Workflow Test"
+    engine: "playwright"
+    testFunction: "fullWorkflow"
+    weight: 100
+
+# Define custom metrics yang akan dihitung
+metrics:
+  - name: "login_success_rate"
+    unit: "percent"
+    description: "Percentage of successful login attempts"
+  - name: "navigation_success_rate"
+    unit: "percent"
+    description: "Percentage of successful tab navigation attempts"
+  - name: "upload_success_rate"
+    unit: "percent"
+    description: "Percentage of successful file upload attempts"
+  - name: "workflow_success_rate"
+    unit: "percent"
+    description: "Percentage of successful full workflow executions"
+  - name: "overall_error_rate"
+    unit: "percent"
+    description: "Overall error rate across all scenarios"
+  - name: "avg_login_time_ms"
+    unit: "milliseconds"
+    description: "Average login completion time"
+  - name: "avg_navigation_time_ms"
+    unit: "milliseconds"
+    description: "Average navigation completion time"
+  - name: "avg_upload_time_ms"
+    unit: "milliseconds"
+    description: "Average upload completion time"
+
+# Add hooks for setup/teardown and custom metrics
+hooks:
+  beforeScenario:
+    - log: "Starting scenario execution..."
+  afterScenario:
+    - log: "Scenario completed."
+  afterResponse:
+    - function: "calculateCustomMetrics"

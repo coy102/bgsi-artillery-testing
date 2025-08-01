@@ -1,0 +1,114 @@
+{
+  "aggregate": {
+    "counters": {
+      "vusers.created_by_name.Login and Portal": 9,
+      "vusers.created": 9,
+      "browser.page.codes.200": 171,
+      "browser.http_requests": 171,
+      "login.failed": 9,
+      "errors.page.fill: Timeout 30000ms exceeded.": 9,
+      "vusers.failed": 9
+    },
+    "rates": {},
+    "firstCounterAt": 1753859870892,
+    "firstHistogramAt": 1753859871742,
+    "lastCounterAt": 1753859903835,
+    "lastHistogramAt": 1753859873835,
+    "firstMetricAt": 1753859870892,
+    "lastMetricAt": 1753859903835,
+    "period": 1753859900000,
+    "summaries": {
+      "browser.page.TTFB.https://d1qi3skkkgjn1r.cloudfront.net/login": {
+        "min": 72.3,
+        "max": 240.9,
+        "count": 9,
+        "mean": 118.6,
+        "p50": 94.6,
+        "median": 94.6,
+        "p75": 144,
+        "p90": 169,
+        "p95": 169,
+        "p99": 169,
+        "p999": 169
+      }
+    },
+    "histograms": {
+      "browser.page.TTFB.https://d1qi3skkkgjn1r.cloudfront.net/login": {
+        "min": 72.3,
+        "max": 240.9,
+        "count": 9,
+        "mean": 118.6,
+        "p50": 94.6,
+        "median": 94.6,
+        "p75": 144,
+        "p90": 169,
+        "p95": 169,
+        "p99": 169,
+        "p999": 169
+      }
+    }
+  },
+  "intermediate": [
+    {
+      "counters": {
+        "vusers.created_by_name.Login and Portal": 9,
+        "vusers.created": 9,
+        "browser.page.codes.200": 171,
+        "browser.http_requests": 171
+      },
+      "rates": {},
+      "firstCounterAt": 1753859870892,
+      "firstHistogramAt": 1753859871742,
+      "lastCounterAt": 1753859873831,
+      "lastHistogramAt": 1753859873835,
+      "firstMetricAt": 1753859870892,
+      "lastMetricAt": 1753859873835,
+      "period": "1753859870000",
+      "summaries": {
+        "browser.page.TTFB.https://d1qi3skkkgjn1r.cloudfront.net/login": {
+          "min": 72.3,
+          "max": 240.9,
+          "count": 9,
+          "mean": 118.6,
+          "p50": 94.6,
+          "median": 94.6,
+          "p75": 144,
+          "p90": 169,
+          "p95": 169,
+          "p99": 169,
+          "p999": 169
+        }
+      },
+      "histograms": {
+        "browser.page.TTFB.https://d1qi3skkkgjn1r.cloudfront.net/login": {
+          "min": 72.3,
+          "max": 240.9,
+          "count": 9,
+          "mean": 118.6,
+          "p50": 94.6,
+          "median": 94.6,
+          "p75": 144,
+          "p90": 169,
+          "p95": 169,
+          "p99": 169,
+          "p999": 169
+        }
+      }
+    },
+    {
+      "counters": {
+        "login.failed": 9,
+        "errors.page.fill: Timeout 30000ms exceeded.": 9,
+        "vusers.failed": 9
+      },
+      "rates": {},
+      "firstCounterAt": 1753859901737,
+      "lastCounterAt": 1753859903835,
+      "firstMetricAt": 1753859901737,
+      "lastMetricAt": 1753859903835,
+      "period": "1753859900000",
+      "summaries": {},
+      "histograms": {}
+    }
+  ]
+}
