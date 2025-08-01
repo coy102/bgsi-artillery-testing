@@ -1,0 +1,36 @@
+config:
+  target: "{{ $processEnvironment.SBEACON_API_URL }}"
+  phases:
+    - duration: 30
+      arrivalCount: 1
+      name: "Load test - 200 total requests over 100 seconds"
+  plugins:
+    fake-data:
+      randPassword:
+        size: 5
+  processor: "./sbeacon-ingest-project-api-test.ts"
+
+  # HTTP engine configuration
+  http:
+    timeout: 30
+    pool: 25
+
+scenarios:
+  - name: "SBEACON Ingest Project API Test"
+    weight: 100
+    flow:
+      - function: "setAllVariables"
+      - log: "Generated Dataset ID: {{ datasetId }}"
+      - log: "Project Name: {{ projectName }}"
+      - log: "S3 Payload: {{ s3PayloadUrl }}"
+      - post:
+          url: "/dportal/admin/projects/{{ projectName }}/ingest/{{ datasetId }}"
+          headers:
+            Content-Type: "application/json"
+            Authorization: "Bearer {{ $processEnvironment.JWT_TOKEN }}"
+            User-Agent: "Artillery SBEACON Load Test"
+          json:
+            s3Payload: "{{ s3PayloadUrl }}"
+            vcfLocations: "{{ vcfLocationsList }}"
+          expect:
+            - statusCode: [200]
