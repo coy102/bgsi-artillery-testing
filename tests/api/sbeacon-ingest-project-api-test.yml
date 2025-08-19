@@ -1,8 +1,8 @@
 config:
   target: "{{ $processEnvironment.SBEACON_API_URL }}"
   phases:
-    - duration: 30
-      arrivalCount: 1
+    - duration: 120
+      arrivalRate: 50 # ~100 concurrent users
       name: "Load test - 200 total requests over 100 seconds"
   plugins:
     fake-data:

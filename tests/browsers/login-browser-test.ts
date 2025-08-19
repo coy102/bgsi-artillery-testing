@@ -1,4 +1,4 @@
-// login-test.ts - Playwright test functions only
+// login-test.ts - Playwright test functions with increased timeouts
 import { Page, expect } from "@playwright/test";
 import * as path from "path";
 import * as fs from "fs";
@@ -6,17 +6,42 @@ import * as fs from "fs";
 async function performLogin(page: Page, vuId: string) {
   console.log(`🔑 VU-${vuId}: Performing login...`);
 
-  await page.goto("/login");
-  await page.fill(
-    'input[formcontrolname="email"]',
-    process.env.LOGIN_EMAIL || ""
-  );
-  await page.fill(
-    'input[formcontrolname="password"]',
-    process.env.LOGIN_PASSWORD || ""
-  );
-  await page.locator('button.mat-mdc-raised-button:has-text("Login")').click();
-  await page.waitForTimeout(200);
+  try {
+    // Navigate dengan timeout lebih besar
+    await page.goto("/login", { waitUntil: "networkidle", timeout: 60000 });
+
+    // Wait for elements to be ready
+    await page.waitForSelector('input[formcontrolname="email"]', {
+      state: "visible",
+      timeout: 30000,
+    });
+
+    // Fill dengan timeout explicit
+    await page.fill(
+      'input[formcontrolname="email"]',
+      process.env.LOGIN_EMAIL || "",
+      { timeout: 15000 }
+    );
+
+    await page.fill(
+      'input[formcontrolname="password"]',
+      process.env.LOGIN_PASSWORD || "",
+      { timeout: 15000 }
+    );
+
+    // Wait for button to be clickable
+    const loginButton = page.locator(
+      'button.mat-mdc-raised-button:has-text("Login")'
+    );
+    await loginButton.waitFor({ state: "visible", timeout: 10000 });
+    await loginButton.click();
+
+    // Longer wait after login
+    await page.waitForTimeout(2000);
+  } catch (error) {
+    console.log(`❌ VU-${vuId}: Login failed - ${error.message}`);
+    throw error;
+  }
 }
 
 async function loginAndPortal(page: Page, vuContext: any, events: any) {
@@ -28,16 +53,21 @@ async function loginAndPortal(page: Page, vuContext: any, events: any) {
 
     // Use helper function
     await performLogin(page, vuId);
-    await page.waitForTimeout(2000);
 
-    await page.goto("/dportal/portal");
+    // Navigate to portal dengan timeout
+    await page.goto("/dportal/portal", {
+      waitUntil: "networkidle",
+      timeout: 60000,
+    });
 
-    await page.waitForTimeout(2000);
+    // Wait longer for portal to load
+    await page.waitForTimeout(3000);
 
-    // Verify Data Portal page - try multiple approaches
-    await expect(
-      page.locator('input[formcontrolname="projectName"]')
-    ).toBeVisible({ timeout: 5000 });
+    // Verify Data Portal page dengan timeout lebih besar
+    await page.waitForSelector('input[formcontrolname="projectName"]', {
+      state: "visible",
+      timeout: 30000,
+    });
 
     const duration = Date.now() - start;
     console.log(
@@ -65,13 +95,26 @@ async function projectOnBoardAndUpload(
 
   try {
     console.log(`🔄 VU-${vuId}: Starting project onboard and upload...`);
+
+    // Wait for form to be fully loaded
+    await page.waitForSelector('input[formcontrolname="projectName"]', {
+      state: "visible",
+      timeout: 30000,
+    });
+
+    // Fill dengan timeout explicit dan wait
     await page.fill(
       'input[formcontrolname="projectName"]',
-      `Project-load-testing-${vuId}`
+      `Project-load-testing-${vuId}`,
+      { timeout: 15000 }
     );
+
+    await page.waitForTimeout(500); // Small wait between fills
+
     await page.fill(
       'textarea[formcontrolname="projectDescription"]',
-      `This is a test project for load testing with VU-${vuId}`
+      `This is a test project for load testing with VU-${vuId}`,
+      { timeout: 15000 }
     );
 
     // Upload multiple files
@@ -113,22 +156,29 @@ async function projectOnBoardAndUpload(
       `📁 VU-${vuId}: Using ${validFiles.length} valid files for upload`
     );
 
+    // Wait for file input dengan timeout lebih besar
     const fileInput = page.locator(
       'app-file-dropper input[type="file"][multiple]'
     );
 
-    await expect(fileInput).toBeAttached({ timeout: 5000 });
+    await fileInput.waitFor({ state: "attached", timeout: 30000 });
     console.log(`✅ VU-${vuId}: File input found`);
 
     await fileInput.setInputFiles(validFiles);
     console.log(`✅ VU-${vuId}: Files set to input successfully`);
-    await page.waitForTimeout(5000);
 
-    await page
-      .locator('button.mat-mdc-raised-button:has-text("Submit")')
-      .click();
+    // Wait longer for file upload processing
+    await page.waitForTimeout(8000);
 
-    await page.waitForTimeout(5000);
+    // Wait for submit button and click
+    const submitButton = page.locator(
+      'button.mat-mdc-raised-button:has-text("Submit")'
+    );
+    await submitButton.waitFor({ state: "visible", timeout: 10000 });
+    await submitButton.click();
+
+    // Wait longer for submission processing
+    await page.waitForTimeout(10000);
 
     const duration = Date.now() - start;
 

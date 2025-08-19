@@ -43,6 +43,7 @@ for test_file in $browser_test_files; do
     ((total_tests++))
     
     # Run artillery with record and key from .env
+    # if artillery run "$test_file"; then
     if artillery run "$test_file" --record --key "$ARTILLERY_KEY"; then
         echo "✅ Test completed successfully: $test_file"
         ((successful_tests++))

@@ -1,9 +1,16 @@
 config:
   target: "{{ $processEnvironment.SBEACON_API_URL }}"
   phases:
+    # Warm-up phase
     - duration: 30
       arrivalCount: 10
-      name: "Load test - 200 total requests over 100 seconds"
+      name: "Warm-up - 10 users"
+
+    # Main load test - exactly 100 users
+    - duration: 120
+      arrivalCount: 100
+      name: "Load test - 100 users over 120 seconds"
+
   plugins:
     fake-data:
       randPassword:
