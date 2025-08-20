@@ -1,0 +1,114 @@
+config:
+  target: "{{ $processEnvironment.PGX_API_URL }}"
+  phases:
+    # Warm-up phase
+    - duration: 30
+      arrivalCount: 10
+      name: "Warm-up - 10 users"
+
+    # Main load test - exactly 100 users
+    - duration: 120
+      arrivalCount: 40
+      name: "Load test - 40 users over 120 seconds"
+  plugins:
+    fake-data:
+      randPassword:
+        size: 5
+  processor: "./svep-vcfstat-api-test.ts"
+
+  # HTTP engine configuration
+  http:
+    timeout: 30
+    pool: 25
+
+scenarios:
+  - name: "VCFStat API Test - alle_freq"
+    weight: 100
+    beforeRequest: "setVariablesForNextProject"
+    flow:
+      - loop:
+          - post:
+              url: "/vcfstats"
+              headers:
+                Content-Type: "application/json"
+                Authorization: "Bearer {{ $processEnvironment.JWT_TOKEN }}"
+                User-Agent: "Artillery SBEACON Load Test"
+              json:
+                fileName: "{{ fileName }}"
+                key: "alle_freq"
+                projectName: "{{ projectName }}"
+              expect:
+                - statusCode: [200]
+        count: 10 # Test 10 different projects in parallel
+  - name: "VCFStat API Test - gq"
+    weight: 100
+    beforeRequest: "setVariablesForNextProject"
+    flow:
+      - loop:
+          - post:
+              url: "/vcfstats"
+              headers:
+                Content-Type: "application/json"
+                Authorization: "Bearer {{ $processEnvironment.JWT_TOKEN }}"
+                User-Agent: "Artillery SBEACON Load Test"
+              json:
+                fileName: "{{ fileName }}"
+                key: "gq"
+                projectName: "{{ projectName }}"
+              expect:
+                - statusCode: [200]
+        count: 10 # Test 10 different projects in parallel
+  - name: "VCFStat API Test - qc_hc"
+    weight: 100
+    beforeRequest: "setVariablesForNextProject"
+    flow:
+      - loop:
+          - post:
+              url: "/vcfstats"
+              headers:
+                Content-Type: "application/json"
+                Authorization: "Bearer {{ $processEnvironment.JWT_TOKEN }}"
+                User-Agent: "Artillery SBEACON Load Test"
+              json:
+                fileName: "{{ fileName }}"
+                key: "qc_hc"
+                projectName: "{{ projectName }}"
+              expect:
+                - statusCode: [200]
+        count: 10 # Test 10 different projects in parallel
+  - name: "VCFStat API Test - snp_pass"
+    weight: 100
+    beforeRequest: "setVariablesForNextProject"
+    flow:
+      - loop:
+          - post:
+              url: "/vcfstats"
+              headers:
+                Content-Type: "application/json"
+                Authorization: "Bearer {{ $processEnvironment.JWT_TOKEN }}"
+                User-Agent: "Artillery SBEACON Load Test"
+              json:
+                fileName: "{{ fileName }}"
+                key: "snp_pass"
+                projectName: "{{ projectName }}"
+              expect:
+                - statusCode: [200]
+        count: 10 # Test 10 different projects in parallel
+  - name: "VCFStat API Test - low_var"
+    weight: 100
+    beforeRequest: "setVariablesForNextProject"
+    flow:
+      - loop:
+          - post:
+              url: "/vcfstats"
+              headers:
+                Content-Type: "application/json"
+                Authorization: "Bearer {{ $processEnvironment.JWT_TOKEN }}"
+                User-Agent: "Artillery SBEACON Load Test"
+              json:
+                fileName: "{{ fileName }}"
+                key: "low_var"
+                projectName: "{{ projectName }}"
+              expect:
+                - statusCode: [200]
+        count: 10 # Test 10 different projects in parallel
