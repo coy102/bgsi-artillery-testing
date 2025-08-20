@@ -3,14 +3,14 @@ export const PREFIX_S3_PATH =
   "s3://gaspi-dataportal-20250725085318492000000003/projects/";
 
 export const PROJECT_NAMES = [
-  "Project-load-testing-bfa975",
-  "Project-load-testing-3837be",
-  "Project-load-testing-b5b7ac",
-  "Project-load-testing-85e130",
-  "Project-load-testing-e7348b",
-  "Project-load-testing-c4c5fe",
-  "Project-load-testing-609f9b",
-  "Project-load-testing-2be06f",
-  "Project-load-testing-067bd3",
-  "Project-load-testing-4f89aa",
+  "Project-load-testing-fdafbe",
+  "Project-load-testing-f8af02",
+  "Project-load-testing-abe93f",
+  "Project-load-testing-362c96",
+  "Project-load-testing-0a98cd",
+  "Project-load-testing-9e0adb",
+  "Project-load-testing-70c2f7",
+  "Project-load-testing-36797e",
+  "Project-load-testing-3408d8",
+  "Project-load-testing-01565f",
 ];

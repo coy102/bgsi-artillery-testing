@@ -18,7 +18,7 @@ interface RequestParams {
 
 type DoneCallback = () => void;
 
-const PROJECTS = ["Project-load-testing-85e130"];
+const PROJECTS = [PROJECT_NAMES[0]];
 
 const SCOPE = {
   individuals: "individuals",

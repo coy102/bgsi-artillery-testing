@@ -1,6 +1,11 @@
 #!/bin/bash
 
 # Load environment variables from .env file
+
+export NODE_OPTIONS="--max-old-space-size=8192 --max-semi-space-size=1024"
+export UV_THREADPOOL_SIZE=64
+export NODE_ENV=production
+
 if [ -f .env ]; then
     echo "📄 Loading environment variables from .env file..."
     export $(cat .env | grep -v '^#' | xargs)

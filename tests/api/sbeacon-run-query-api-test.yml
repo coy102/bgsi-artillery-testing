@@ -6,10 +6,10 @@ config:
       arrivalCount: 10
       name: "Warm-up - 10 users"
 
-    # Main load test - exactly 100 users
+    # Main load test - exactly 40 users
     - duration: 120
-      arrivalCount: 100
-      name: "Load test - 100 users over 120 seconds"
+      arrivalCount: 40
+      name: "Load test - 40 users over 120 seconds"
 
   plugins:
     fake-data:

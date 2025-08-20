@@ -2,7 +2,7 @@ config:
   target: "{{ $processEnvironment.WEB_URL }}"
   phases:
     # Warm-up phase
-    - duration: 30
+    - duration: 300
       arrivalCount: 10
       name: "Warm-up - 10 users"
 

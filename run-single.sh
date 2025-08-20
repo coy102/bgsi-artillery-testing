@@ -69,8 +69,8 @@ echo -e "${CYAN}JWT Token:${NC} ${JWT_TOKEN:0:20}..."
 
 if [ -n "$ARTILLERY_KEY" ]; then
     echo -e "${CYAN}Artillery Cloud:${NC} Enabled (${ARTILLERY_KEY:0:10}...)"
-    # RECORD_OPTIONS="--record --key $ARTILLERY_KEY"
-    RECORD_OPTIONS="--output test-run-report.json"
+    RECORD_OPTIONS="--record --key $ARTILLERY_KEY"
+    # RECORD_OPTIONS="--output test-run-report.json"
 else
     echo -e "${CYAN}Artillery Cloud:${NC} Disabled"
     RECORD_OPTIONS=""

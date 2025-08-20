@@ -14,7 +14,7 @@ config:
     fake-data:
       randPassword:
         size: 5
-  processor: "./sbeacon-ingest-project-api-test.ts"
+  processor: "./sbeacon-assign-project-api-test.ts"
 
   # HTTP engine configuration
   http:
@@ -22,20 +22,19 @@ config:
     pool: 25
 
 scenarios:
-  - name: "SBEACON Ingest Project API Test"
+  - name: "SBEACON Add User to Project API Test"
     weight: 100
     beforeRequest: "setVariablesForNextProject"
     flow:
       - loop:
           - post:
-              url: "/dportal/admin/projects/{{ projectName }}/ingest/{{ datasetId }}"
+              url: "/dportal/admin/projects/{{ projectName }}/users"
               headers:
                 Content-Type: "application/json"
                 Authorization: "Bearer {{ $processEnvironment.JWT_TOKEN }}"
                 User-Agent: "Artillery SBEACON Load Test"
               json:
-                s3Payload: "{{ s3PayloadUrl }}"
-                vcfLocations: "{{ vcfLocationsList }}"
+                emails: "{{ emails }}"
               expect:
                 - statusCode: [200]
         count: 10 # Test 10 different projects per virtual user

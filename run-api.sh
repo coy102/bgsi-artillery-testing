@@ -75,8 +75,8 @@ for test_file in $api_test_files; do
     ((total_tests++))
     
     # Run artillery with record and key from .env
-    # if artillery run "$test_file"; then
-    if artillery run "$test_file" --record --key "$ARTILLERY_KEY"; then
+    if artillery run "$test_file"; then
+    # if artillery run "$test_file" --record --key "$ARTILLERY_KEY"; then
         echo "✅ API test completed successfully: $test_file"
         ((successful_tests++))
     else
