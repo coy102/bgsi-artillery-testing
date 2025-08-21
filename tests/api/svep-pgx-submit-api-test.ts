@@ -16,9 +16,6 @@ interface RequestParams {
   json: any;
 }
 
-const KEYS = ["alle_freq", "gq", "qc_hc", "snp_pass", "low_var"];
-const FILENAME = "rare_disease.vcf.gz";
-
 type DoneCallback = () => void;
 
 export function setVariablesForNextProject(
@@ -30,14 +27,19 @@ export function setVariablesForNextProject(
   // Get current loop iteration (0-based, Artillery provides this)
   const currentLoop = context.vars.$loopCount || 1;
   const arrayIndex = currentLoop - 1; // Convert to 0-based index
+
+  const randomSuffix = Math.random().toString(36).substring(2, 7);
+
   const projectName = PROJECT_NAMES[arrayIndex];
   // const projectName = "Project-load-testing-0a98cd";
 
   // Set dynamic variables
+  context.vars.jobName = `Job-${projectName}-pgx-${randomSuffix}`;
+  context.vars.location = `s3://gaspi-dataportal-20250725085318492000000003/projects/${projectName}/project-files/pgx.vcf.gz`;
+  context.vars.missingToRef = false;
   context.vars.projectName = projectName;
-  context.vars.fileName = FILENAME;
-
-  requestParams.url = `/vcfstats`;
+  context.vars.userId = "ap-southeast-3:30c5f016-6ed7-cc68-4932-038618b2788f";
+  requestParams.url = `/submit`;
 
   // Debug logs
   console.log(

@@ -1,0 +1,44 @@
+config:
+  target: "{{ $processEnvironment.PGX_API_URL }}"
+  phases:
+    # Warm-up phase
+    - duration: 30
+      arrivalCount: 10
+      name: "Warm-up - 10 users"
+
+    # Main load test - exactly 100 users
+    - duration: 120
+      arrivalCount: 40
+      name: "Load test - 40 users over 120 seconds"
+  plugins:
+    fake-data:
+      randPassword:
+        size: 5
+  processor: "./svep-pgx-submit-api-test.ts"
+
+  # HTTP engine configuration
+  http:
+    timeout: 30
+    pool: 25
+
+scenarios:
+  - name: "PGXFLOW Submit flow"
+    weight: 100
+    beforeRequest: "setVariablesForNextProject"
+    flow:
+      - loop:
+          - post:
+              url: "/submit"
+              headers:
+                Content-Type: "application/json"
+                Authorization: "Bearer {{ $processEnvironment.JWT_TOKEN }}"
+                User-Agent: "Artillery SBEACON Load Test"
+              json:
+                jobName: "{{ jobName }}"
+                location: "{{ location }}"
+                missingToRef: "{{ missingToRef }}"
+                projectName: "{{ projectName }}"
+                userId: "{{ userId }}"
+              expect:
+                - statusCode: [200]
+        count: 10 # Test 10 different projects in parallel
