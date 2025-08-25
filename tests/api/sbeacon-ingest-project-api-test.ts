@@ -1,4 +1,4 @@
-import { PREFIX_S3_PATH, PROJECT_NAME_INPUT, PROJECT_NAMES } from "./constants";
+import { PREFIX_S3_PATH, PROJECT_NAMES } from "./constants";
 
 // processor.ts
 interface Context {
